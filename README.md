@@ -1,4 +1,4 @@
-[<img src="../Misc/images/UCLADepartmentofStatisticsSmall.png" align="left" width=500 alt="UCLA STAT Logo"/>](http://statistics.ucla.edu/)<br/>  
+[<img src="./Misc/images/UCLADepartmentofStatisticsSmall.png" align="left" width=500 alt="UCLA STAT Logo"/>](http://statistics.ucla.edu/)<br/>  
    
 <p/>      <br/> 
                             
