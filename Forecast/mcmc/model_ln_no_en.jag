@@ -1,0 +1,45 @@
+#=======================================================================
+# JAGS model
+#
+#   NOTES:
+#        - ar is gamma, the autoregressive process (tau_ar: precision)
+#        - dow is day of the week matrix time rows and Mon-Sat cols
+#=======================================================================
+model {
+  #-------------------------------------------------------------------
+  # time t = 1
+  #-------------------------------------------------------------------
+  Y_pred[1] <- Y[1]
+  ar[1] ~ dnorm(0, tau_ar)
+
+  #-------------------------------------------------------------------
+  # time t = 2:T + forecast days
+  #-------------------------------------------------------------------
+  for(t in 2:(N_data+N_ahead)) {
+    Y[t] ~ dnorm(mu[t], tau_ln)
+    Y_pred[t] ~ dnorm(mu[t], tau_ln)
+    mu[t] <- 
+      ar[t] +
+      Omega[t] + 
+      inprod(dw, dow[t,])
+    ar[t] ~ dnorm(phi[t] * ar[t-1], tau_ar)
+    phi[t] <- inprod(beta, beta_basis[t,])
+    Omega[t] <- lambda[t] * omega[t]
+    lambda[t] ~ dbern(pi)
+    omega[t] ~ dnorm(0, tau_omega)
+  }
+  #-------------------------------------------------------------------
+  # priors
+  #-------------------------------------------------------------------
+  tau_ln ~ dgamma(0.001, 0.001)
+  sd_ln <- pow(tau_ln, -1/2)
+  beta ~ dmnorm(mu_beta, tau_beta)
+  for(i in 1:6){
+    dw[i] ~ dnorm(0, 10)
+  }
+  tau_ar ~ dgamma(0.001, 0.001)
+  sd_ar <- pow(tau_ar, -1/2)
+  tau_omega ~ dgamma(0.001, 0.001)
+  sd_omega <- pow(tau_omega, -1/2)
+  pi ~ dunif(0, 1)
+}
